@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BookingsRepository extends JpaRepository<Bookings, Long> {
 
-    Bookings findBookingsByShowNumberAndMobileNumber(int showNumber, String mobileNumber);
-    Bookings findBookingsByShowNumberAndSeatNumber(int showNumber, String seatNumber);
+    Bookings findBookingsByShowNumberAndMobileNumberAndDeleted(int showNumber, String mobileNumber, boolean deleted);
+    Bookings findBookingsByShowNumberAndSeatNumberAndDeleted(int showNumber, String seatNumber, boolean deleted);
+    Bookings findBookingsByTicketNumberAndMobileNumberAndDeleted(String ticketNumber, String mobileNumber, boolean deleted);
 
 }

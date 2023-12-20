@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShowService {
@@ -46,7 +47,9 @@ public class ShowService {
         showsList.setShowNumber(showNumber);
         showsList.setRows(rows);
         showsList.setColumns(columns);
-        showsList.setCancellationTimeFrame(cancellationTime);
+        if (Optional.ofNullable(cancellationTime).isPresent()) {
+            showsList.setCancellationTimeFrame(cancellationTime);
+        }
         showsListRepository.save(showsList);
 
     }
@@ -84,9 +87,13 @@ public class ShowService {
     }
 
     private int addCancellationTimeWindow() throws IOException {
-        int cancellationWindow;
+        int cancellationWindow = 0;
         System.out.print("Cancellation Window (in minutes): ");
-        cancellationWindow = Integer.parseInt(console.readLine());
+        try{
+            cancellationWindow = Integer.parseInt(console.readLine());
+        } catch (Exception exc) {
+            System.out.println("No Cancellation Window was set. Will default to 2 minutes. ");
+        }
 
         return cancellationWindow;
     }

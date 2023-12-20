@@ -17,6 +17,6 @@ public class ShowsList {
     private int showNumber;
     private int rows;
     private String columns;
-    private long cancellationTimeFrame;
+    private long cancellationTimeFrame = 2;
 
 }

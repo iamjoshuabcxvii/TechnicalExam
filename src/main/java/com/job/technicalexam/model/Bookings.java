@@ -21,6 +21,7 @@ public class Bookings {
     private String mobileNumber;
     private String seatNumber;
     private String ticketNumber;
+    private boolean deleted = false;
     @CreationTimestamp
     private Timestamp createdDate;
     @UpdateTimestamp

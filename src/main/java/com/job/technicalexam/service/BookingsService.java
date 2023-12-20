@@ -83,7 +83,7 @@ public class BookingsService {
 
     private void validateBookingViaShowNumberAndPhoneNumber(int showNumber, String phoneNumber) throws IOException {
         Bookings bookings;
-        bookings = bookingsRepository.findBookingsByShowNumberAndMobileNumber(showNumber, phoneNumber);
+        bookings = bookingsRepository.findBookingsByShowNumberAndMobileNumberAndDeleted(showNumber, phoneNumber, false);
 
         if (Optional.ofNullable(bookings).isPresent()) {
             bookingAlreadyExistAction();
@@ -129,7 +129,7 @@ public class BookingsService {
         }
 
         Bookings bookings;
-        bookings = bookingsRepository.findBookingsByShowNumberAndSeatNumber(showNumber, seatNumber);
+        bookings = bookingsRepository.findBookingsByShowNumberAndSeatNumberAndDeleted(showNumber, seatNumber, false);
         if (Optional.ofNullable(bookings).isPresent()) {
             System.out.println("Duplicate bookings were found for Seat Number: " + seatNumber);
             isDuplicateExist = true;
@@ -225,7 +225,24 @@ public class BookingsService {
 
     }
 
-    public void cancelBookedSeats() {
+    public void cancelBookedSeats() throws IOException {
+        Bookings bookingsResult;
+
+        System.out.print("Enter Ticket Number: ");
+        String ticketNumber = console.readLine();
+        System.out.print("Enter Mobile Number: ");
+        String mobileNumber = console.readLine();
+        bookingsResult = bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(ticketNumber, mobileNumber, false);
+        if(Optional.ofNullable(bookingsResult).isPresent()) {
+            bookingsResult.setDeleted(true);
+            bookingsRepository.save(bookingsResult);
+            System.out.println("Successfully canceled Booking with Ticket No.: "+ticketNumber);
+            customerService.view();
+        } else {
+            System.out.println("Ticket Number or Mobile Number booked not found. Please try again. Press Enter to continue.");
+            console.readLine();
+            customerService.view();
+        }
 
     }
 }
