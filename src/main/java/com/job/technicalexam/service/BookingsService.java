@@ -46,7 +46,7 @@ public class BookingsService {
     private int bookShowNumber() throws IOException {
         int showNumber = 0;
         System.out.print("Enter Show number to book: ");
-        try{
+        try {
             showNumber = Integer.parseInt(console.readLine());
         } catch (Exception exc) {
             invalidShowAction();
@@ -115,7 +115,7 @@ public class BookingsService {
         );
 
         if (!isDuplicateExist && !outOfConfiguredRange) {
-            ticketNumber = saveBookingInDb(showNumber, phoneNumber, listOfSeats);
+            saveBookingInDb(showNumber, phoneNumber, listOfSeats);
         }
 
     }
@@ -136,7 +136,7 @@ public class BookingsService {
             System.out.println("Press Enter key to continue.");
             console.readLine();
         }
-        if(isDuplicateExist && outOfConfiguredRange) {
+        if (isDuplicateExist && outOfConfiguredRange) {
             result = true;
         }
 
@@ -145,7 +145,7 @@ public class BookingsService {
 
     private boolean vaidateIfWithinRangeOfColumns(String seatNumber, ShowsList showsList) {
         boolean result = false;
-        String inputtedColumnStr = seatNumber.substring(0,1);
+        String inputtedColumnStr = seatNumber.substring(0, 1);
         char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
         int inputtedColumnInt = Character.valueOf(inputtedColumnn).charValue();
 
@@ -157,14 +157,14 @@ public class BookingsService {
         int maximumColumnInt = Character.valueOf(maximumColumn).charValue();
 
         if (inputtedColumnInt < minimumColumnInt || inputtedColumnInt > maximumColumnInt
-        || inputtedRow > showsList.getRows()
+                || inputtedRow > showsList.getRows()
         ) {
-            System.out.println("Seat Number "+seatNumber+" is invalid for the show as it is out of Range. Please try again.");
+            System.out.println("Seat Number " + seatNumber + " is invalid for the show as it is out of Range. Please try again.");
             result = true;
         }
 
 
-            return result;
+        return result;
     }
 
     private String[] separateIntoListOfSeats(String seatsBooked) {
@@ -180,18 +180,16 @@ public class BookingsService {
 
 
     @Transactional
-    String saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
-
-        final String ticketNumber = generateTicketNumber(showNumber);
+    void saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
 
         bookedSeats.stream().forEach(seat -> {
 //                    try {
                     Bookings bookings = new Bookings();
-                        bookings.setShowNumber(showNumber);
-                        bookings.setMobileNumber(mobileNumber);
-                        bookings.setSeatNumber(seat);
-                        bookings.setTicketNumber(ticketNumber);
-                        bookingsRepository.save(bookings);
+                    bookings.setShowNumber(showNumber);
+                    bookings.setMobileNumber(mobileNumber);
+                    bookings.setSeatNumber(seat);
+                    bookings.setTicketNumber(generateTicketNumber(showNumber, seat));
+                    bookingsRepository.save(bookings);
 //                    } catch (Exception exc) {
 //                        errorWhileSaving();
 //                        try {
@@ -204,10 +202,7 @@ public class BookingsService {
                 }
 
         );
-        System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
-
-
-        return ticketNumber;
+//        System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
     }
 
     private void errorWhileSaving() {
@@ -215,12 +210,13 @@ public class BookingsService {
                 "Rolling back changes. Please try again. Press enter key to continue.");
     }
 
-    private String generateTicketNumber(int showNumber) {
+    private String generateTicketNumber(int showNumber, String seatNumber) {
         String bookingNumber;
         long epoch = System.currentTimeMillis() / 1000;
 
-        bookingNumber = BOOKING_NO_PREFIX + showNumber + "-" + epoch;
+        bookingNumber = BOOKING_NO_PREFIX + showNumber + seatNumber + "-" + epoch;
 
+        System.out.println("Successfully Generated Booking with Reference No.: " + bookingNumber);
         return bookingNumber;
     }
 
