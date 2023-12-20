@@ -1,5 +1,6 @@
 package com.job.technicalexam.service;
 
+import com.job.technicalexam.model.Bookings;
 import com.job.technicalexam.model.ShowsList;
 import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
 
 @Service
 public class ShowService {
@@ -97,6 +99,10 @@ public class ShowService {
 
     public void viewShowsAndBookings() {
         System.out.println("List of Bookings");
-        System.out.println(bookingsRepository.findAll());
+        List<Bookings> bookingsList = bookingsRepository.findAll();
+
+        bookingsList.stream().forEach(record -> {
+            System.out.println("--> " + record);
+        });
     }
 }
