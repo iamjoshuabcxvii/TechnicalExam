@@ -98,7 +98,6 @@ public class BookingsService {
 
     private void bookedSeats(int showNumber, String phoneNumber) throws IOException {
         String seatsBooked;
-        String ticketNumber = null;
         List<String> listOfSeats;
         System.out.print("Enter each comma separate seat numbers to book: ");
         seatsBooked = console.readLine();
@@ -233,10 +232,10 @@ public class BookingsService {
         System.out.print("Enter Mobile Number: ");
         String mobileNumber = console.readLine();
         bookingsResult = bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(ticketNumber, mobileNumber, false);
-        if(Optional.ofNullable(bookingsResult).isPresent()) {
+        if (Optional.ofNullable(bookingsResult).isPresent()) {
             bookingsResult.setDeleted(true);
             bookingsRepository.save(bookingsResult);
-            System.out.println("Successfully canceled Booking with Ticket No.: "+ticketNumber);
+            System.out.println("Successfully canceled Booking with Ticket No.: " + ticketNumber);
             customerService.view();
         } else {
             System.out.println("Ticket Number or Mobile Number booked not found. Please try again. Press Enter to continue.");
