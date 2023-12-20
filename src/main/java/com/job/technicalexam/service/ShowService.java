@@ -34,7 +34,7 @@ public class ShowService {
         addShowInDb(showNumber, rows, columns, cancellationWindow);
     }
 
-    private void addShowInDb(int showNumber, int rows, String columns, int cancellationTime){
+    private void addShowInDb(int showNumber, int rows, String columns, int cancellationTime) {
         ShowsList showsList = new ShowsList();
 
         showsList.setShowNumber(showNumber);
@@ -57,30 +57,32 @@ public class ShowService {
         int rows;
         System.out.print("Number of Rows (1 to 26): ");
         rows = Integer.parseInt(console.readLine());
-        if(rows > MAX_ROWS) {
-            System.out.println("Invalid number of rows. Maximum number of rows allowed is "+ MAX_ROWS+" only. Please try again");
+        if (rows > MAX_ROWS) {
+            System.out.println("Invalid number of rows. Maximum number of rows allowed is " + MAX_ROWS + " only. Please try again");
             addNumberOfRows();
         }
 
         return rows;
     }
+
     private String addNumberOfColumns() throws IOException {
         String columns;
         System.out.print("Number of Columns (A to J): ");
-        columns =  console.readLine();
+        columns = console.readLine();
 
-        if(!columns.toUpperCase().matches("[A-J]")) {
-            System.out.println("Invalid number of columns. Maximum number of rows allowed is "+ MAX_COLUMNS+" only. Please try again");
+        if (!columns.toUpperCase().matches("[A-J]")) {
+            System.out.println("Invalid number of columns. Maximum number of rows allowed is " + MAX_COLUMNS + " only. Please try again");
             addNumberOfColumns();
         }
         return columns.toUpperCase();
     }
+
     private int addCancellationTimeWindow() throws IOException {
         int cancellationWindow;
         System.out.print("Cancellation Window (in minutes): ");
         cancellationWindow = Integer.parseInt(console.readLine());
 
-        return  cancellationWindow;
+        return cancellationWindow;
     }
 
     private void invalidAction() throws IOException {
@@ -88,7 +90,8 @@ public class ShowService {
         console.readLine();
         addShow();
     }
-    public void viewShowsAndBookings(){
+
+    public void viewShowsAndBookings() {
 
     }
 }
