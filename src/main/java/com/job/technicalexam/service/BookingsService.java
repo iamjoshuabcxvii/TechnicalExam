@@ -181,27 +181,30 @@ public class BookingsService {
 
     @Transactional
     String saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
-        Bookings bookings = new Bookings();
+
         final String ticketNumber = generateTicketNumber(showNumber);
 
         bookedSeats.stream().forEach(seat -> {
-                    try {
+//                    try {
+                    Bookings bookings = new Bookings();
                         bookings.setShowNumber(showNumber);
                         bookings.setMobileNumber(mobileNumber);
                         bookings.setSeatNumber(seat);
                         bookings.setTicketNumber(ticketNumber);
                         bookingsRepository.save(bookings);
-                    } catch (Exception exc) {
-                        errorWhileSaving();
-                        try {
-                            console.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-            System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
+//                    } catch (Exception exc) {
+//                        errorWhileSaving();
+//                        try {
+//                            console.readLine();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+
                 }
+
         );
+        System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
 
 
         return ticketNumber;

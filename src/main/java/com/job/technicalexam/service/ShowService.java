@@ -1,6 +1,7 @@
 package com.job.technicalexam.service;
 
 import com.job.technicalexam.model.ShowsList;
+import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,9 @@ public class ShowService {
     final int MAX_COLUMNS = 10;
     @Autowired
     ShowsListRepository showsListRepository;
+
+    @Autowired
+    BookingsRepository bookingsRepository;
 
 
     public void addShow() throws IOException {
@@ -92,6 +96,7 @@ public class ShowService {
     }
 
     public void viewShowsAndBookings() {
-
+        System.out.println("List of Bookings");
+        System.out.println(bookingsRepository.findAll());
     }
 }

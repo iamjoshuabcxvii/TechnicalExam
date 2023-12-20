@@ -15,9 +15,9 @@ public class Bookings {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int userId;
-    @Column(unique = true)
+//    @Column(unique = true)
     private int showNumber;
-    @Column(unique = true)
+//    @Column(unique = true)
     private String mobileNumber;
     private String seatNumber;
     private String ticketNumber;
