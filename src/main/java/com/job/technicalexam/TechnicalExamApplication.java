@@ -1,13 +1,16 @@
 package com.job.technicalexam;
 
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-@SpringBootApplication
-public class TechnicalExamApplication {
+@ComponentScan
+public class TechnicalExamApplication{
+
 
     public static void main(String[] args) {
-        SpringApplication.run(TechnicalExamApplication.class, args);
+        SpringApplication.run(MainView.class, args);
+
+
     }
 
 }
