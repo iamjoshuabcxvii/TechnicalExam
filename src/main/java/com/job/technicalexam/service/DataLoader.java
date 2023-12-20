@@ -57,35 +57,40 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         //Add Default Bookings
         Bookings bookingOne = new Bookings();
         bookingOne.setShowNumber(1);
-        bookingOne.setMobileNumber("09187654321");
+//        bookingOne.setMobileNumber("09187654321");
+        bookingOne.setMobileNumber("1");
         bookingOne.setUserId(1);
         bookingOne.setTicketNumber("BookingNo-1A1-1703086400");
         bookingOne.setSeatNumber("A1");
 
         Bookings bookingTwo = new Bookings();
         bookingTwo.setShowNumber(1);
-        bookingTwo.setMobileNumber("09187654321");
+//        bookingTwo.setMobileNumber("09187654321");
+        bookingTwo.setMobileNumber("1");
         bookingTwo.setUserId(1);
         bookingTwo.setTicketNumber("BookingNo-1A2-1703086400");
         bookingTwo.setSeatNumber("A2");
 
         Bookings bookingThree = new Bookings();
         bookingThree.setShowNumber(1);
-        bookingThree.setMobileNumber("09187654321");
+//        bookingThree.setMobileNumber("09187654321");
+        bookingThree.setMobileNumber("1");
         bookingThree.setUserId(1);
         bookingThree.setTicketNumber("BookingNo-1A3-1703086400");
         bookingThree.setSeatNumber("A3");
 
         Bookings bookingFour = new Bookings();
         bookingFour.setShowNumber(1);
-        bookingFour.setMobileNumber("09187654321");
+//        bookingFour.setMobileNumber("09187654321");
+        bookingFour.setMobileNumber("1");
         bookingFour.setUserId(1);
         bookingFour.setTicketNumber("BookingNo-1A4-1703086400");
         bookingFour.setSeatNumber("A4");
 
         Bookings bookingFive = new Bookings();
         bookingFive.setShowNumber(1);
-        bookingFive.setMobileNumber("09187654321");
+//        bookingFive.setMobileNumber("09187654321");
+        bookingFive.setMobileNumber("1");
         bookingFive.setUserId(1);
         bookingFive.setTicketNumber("BookingNo-1A5-1703086400");
         bookingFive.setSeatNumber("A5");
