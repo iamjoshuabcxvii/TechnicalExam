@@ -93,6 +93,7 @@ public class DataLoader implements ApplicationListener<ContextRefreshedEvent> {
         bookingFive.setMobileNumber("1");
         bookingFive.setUserId(1);
         bookingFive.setTicketNumber("BookingNo-1A5-1703086400");
+        bookingFive.setDeleted(true);
         bookingFive.setSeatNumber("A5");
 
         bookingsRepository.save(bookingOne);

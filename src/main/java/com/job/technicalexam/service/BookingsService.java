@@ -11,10 +11,7 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookingsService {
@@ -82,8 +79,7 @@ public class BookingsService {
     }
 
     private void validateBookingViaShowNumberAndPhoneNumber(int showNumber, String phoneNumber) throws IOException {
-        Bookings bookings;
-        bookings = bookingsRepository.findBookingsByShowNumberAndMobileNumberAndDeleted(showNumber, phoneNumber, false);
+        Bookings bookings = bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(showNumber, phoneNumber, false);
 
         if (Optional.ofNullable(bookings).isPresent()) {
             bookingAlreadyExistAction();
@@ -219,11 +215,6 @@ public class BookingsService {
         return bookingNumber;
     }
 
-
-    public void availableSeats() {
-
-    }
-
     public void cancelBookedSeats() throws IOException {
         Bookings bookingsResult;
 
@@ -244,4 +235,66 @@ public class BookingsService {
         }
 
     }
+
+    public void availableSeats() throws IOException {
+        // View all active bookings for a show
+        System.out.print("Enter Show Number: ");
+        int showNumber = Integer.parseInt(console.readLine());
+        List<Bookings> allBookedSeats = bookingsRepository.findAllByShowNumberAndDeleted(showNumber, false);
+
+        List<String> listOfAllBookedSeats = new ArrayList<>();
+
+        allBookedSeats.stream().forEach(record -> {
+            listOfAllBookedSeats.add(record.getSeatNumber());
+        });
+
+
+        // View all bookable/enabled seats
+        Optional<ShowsList> showsList = Optional.ofNullable(showsListRepository.findShowsListByShowNumber(showNumber));
+        if(showsList.isPresent()) {
+            Optional<List<String>> listOfAllBookableSeats;
+            listOfAllBookableSeats = Optional.ofNullable(allBookableSeats(showsList.get().getColumns(), showsList.get().getRows()));
+
+            //Determine what elements on both list are duplicates
+            List<String> duplicates = new ArrayList<>(listOfAllBookedSeats);
+            duplicates.retainAll(listOfAllBookableSeats.get());
+
+            //Retain only vacant seats
+            List<String> unique2 = listOfAllBookableSeats.get();
+            unique2.removeAll(duplicates);
+
+            System.out.println("Vacant Seats:");
+            unique2.stream().forEach(record -> {
+                        System.out.print(record + " ");
+                    }
+            );
+        } else {
+            invalidShowAction();
+        }
+    }
+
+
+    private List<String> allBookableSeats(String column, int maximumRow) {
+        String inputtedColumnStr = column.substring(0, 1);
+        char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
+        int maximumColumnInt = Character.valueOf(inputtedColumnn).charValue();
+        int minimumColumnInt = 65;
+        int minimumRow = 1;
+
+        List<String> bookableSeats = new ArrayList<>();
+
+        for (int ctr1 = minimumColumnInt; ctr1 <= maximumColumnInt; ctr1++) {
+
+            for (int ctr2 = minimumRow; ctr2 <= maximumRow; ctr2++) {
+                bookableSeats.add(String.valueOf(Character.toChars(ctr1)) + ctr2);
+            }
+
+        }
+//        bookableSeats.stream().forEach(seat -> {
+//            System.out.println("Bookable Seats:"+seat);
+//        });
+        return bookableSeats;
+
+    }
 }
+
