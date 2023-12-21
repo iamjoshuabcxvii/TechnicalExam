@@ -8,7 +8,6 @@ import com.job.technicalexam.util.DateTimeUtility;
 import com.job.technicalexam.view.CustomerView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -190,31 +189,18 @@ public class BookingsService {
         return sanitizedInput;
     }
 
-
     @Transactional
     void saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
 
         bookedSeats.stream().forEach(seat -> {
-//                    try {
                     Bookings bookings = new Bookings();
                     bookings.setShowNumber(showNumber);
                     bookings.setMobileNumber(mobileNumber);
                     bookings.setSeatNumber(seat);
                     bookings.setTicketNumber(generateTicketNumber(showNumber, seat));
                     bookingsRepository.save(bookings);
-//                    } catch (Exception exc) {
-//                        errorWhileSaving();
-//                        try {
-//                            console.readLine();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                    }
-
                 }
-
         );
-//        System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
     }
 
     private void errorWhileSaving() {
@@ -281,7 +267,6 @@ public class BookingsService {
             listOfAllBookedSeats.add(record.getSeatNumber());
         });
 
-
         // View all bookable/enabled seats
         Optional<ShowsList> showsList = Optional.ofNullable(showsListRepository.findShowsListByShowNumber(showNumber));
         if (showsList.isPresent()) {
@@ -301,6 +286,8 @@ public class BookingsService {
                         System.out.print(record + " ");
                     }
             );
+            System.out.println("\n\nPress Enter key to continue: ");
+            console.readLine();
         } else {
             invalidShowAction();
         }

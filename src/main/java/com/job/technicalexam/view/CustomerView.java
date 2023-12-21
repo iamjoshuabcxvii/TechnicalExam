@@ -19,7 +19,7 @@ public class CustomerView {
     LoginView loginView;
 
     public void view() throws IOException {
-        System.out.println("*************************");
+        System.out.println("\n*************************");
         System.out.println("Customer Settings");
         System.out.println("1. Available Seats");
         System.out.println("2. Book Seats");
