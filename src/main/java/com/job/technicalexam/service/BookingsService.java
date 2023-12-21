@@ -4,6 +4,7 @@ import com.job.technicalexam.model.Bookings;
 import com.job.technicalexam.model.ShowsList;
 import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
+import com.job.technicalexam.util.DateTimeUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,6 @@ public class BookingsService {
 
     @Autowired
     BookingsRepository bookingsRepository;
-
 
     boolean isDuplicateExist = false, outOfConfiguredRange = false;
 
@@ -147,7 +147,7 @@ public class BookingsService {
         int minimumColumnInt = 0;
         int maximumColumnInt = 0;
 
-        if(!seatNumber.matches("([a-jA-J]\\d{1,2})")) {
+        if (!seatNumber.matches("([a-jA-J]\\d{1,2})")) {
             isInvalidInput = true;
             invalidSeatError(seatNumber);
         } else {
@@ -167,7 +167,7 @@ public class BookingsService {
         if (inputtedColumnInt < minimumColumnInt || inputtedColumnInt > maximumColumnInt
                 || inputtedRow > showsList.getRows()
         ) {
-                invalidSeatError(seatNumber);
+            invalidSeatError(seatNumber);
             isInvalidInput = true;
         }
 
@@ -232,18 +232,29 @@ public class BookingsService {
     }
 
     public void cancelBookedSeats() throws IOException {
-        Bookings bookingsResult;
+        String ticketNumber = null, mobileNumber = null;
 
         System.out.print("Enter Ticket Number: ");
-        String ticketNumber = console.readLine();
+        ticketNumber = console.readLine();
         System.out.print("Enter Mobile Number: ");
-        String mobileNumber = console.readLine();
-        bookingsResult = bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(ticketNumber, mobileNumber, false);
-        if (Optional.ofNullable(bookingsResult).isPresent()) {
-            bookingsResult.setDeleted(true);
-            bookingsRepository.save(bookingsResult);
-            System.out.println("Successfully canceled Booking with Ticket No.: " + ticketNumber);
-            customerService.view();
+        mobileNumber = console.readLine();
+
+        Optional<Bookings> bookingsResult = Optional.ofNullable(bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(ticketNumber, mobileNumber, false));
+
+        if (bookingsResult.isPresent()) {
+            ShowsList showsList = showsListRepository.findShowsListByShowNumber(bookingsResult.get().getShowNumber());
+            long elapsedMinute = DateTimeUtility.timeElapsedInMinutes(DateTimeUtility.currentDateTimeInEpoch(),
+                    DateTimeUtility.epochOfTimestamp(bookingsResult.get().getCreatedDate()));
+            if (elapsedMinute > showsList.getCancellationTimeFrame()) {
+                System.out.println("Booking Cancellation failed as " + elapsedMinute + " minutes has already elapsed. Bookings that were booked since " +
+                        showsList.getCancellationTimeFrame() + " minutes has elapsed could no longer be cancelled.");
+            } else {
+                //Continue with Cancellation
+                bookingsResult.get().setDeleted(true);
+                bookingsRepository.save(bookingsResult.get());
+                System.out.println("Successfully canceled Booking with Ticket No.: " + ticketNumber);
+                customerService.view();
+            }
         } else {
             System.out.println("Ticket Number or Mobile Number booked not found. Please try again. Press Enter to continue.");
             console.readLine();
@@ -258,7 +269,7 @@ public class BookingsService {
         System.out.print("Enter Show Number: ");
         try {
             showNumber = Integer.parseInt(console.readLine());
-        } catch ( Exception exc) {
+        } catch (Exception exc) {
             invalidShowAction();
         }
         List<Bookings> allBookedSeats = bookingsRepository.findAllByShowNumberAndDeleted(showNumber, false);
@@ -272,7 +283,7 @@ public class BookingsService {
 
         // View all bookable/enabled seats
         Optional<ShowsList> showsList = Optional.ofNullable(showsListRepository.findShowsListByShowNumber(showNumber));
-        if(showsList.isPresent()) {
+        if (showsList.isPresent()) {
             Optional<List<String>> listOfAllBookableSeats;
             listOfAllBookableSeats = Optional.ofNullable(allBookableSeats(showsList.get().getColumns(), showsList.get().getRows()));
 
