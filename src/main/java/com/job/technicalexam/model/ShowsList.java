@@ -18,8 +18,8 @@ public class ShowsList {
 
     @PrePersist
     @PreUpdate
-    public void checkValue(){
-        if(this.cancellationTimeFrame ==0) {
+    public void checkValue() {
+        if (this.cancellationTimeFrame == 0) {
             this.cancellationTimeFrame = 2;
         }
     }

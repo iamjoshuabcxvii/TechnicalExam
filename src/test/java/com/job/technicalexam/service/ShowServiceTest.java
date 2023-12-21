@@ -27,9 +27,6 @@ public class ShowServiceTest {
     ShowService showService;
 
     @Mock
-    ShowsListRepository showsListRepository;
-
-    @Mock
     BookingsRepository bookingsRepository;
 
     @Test

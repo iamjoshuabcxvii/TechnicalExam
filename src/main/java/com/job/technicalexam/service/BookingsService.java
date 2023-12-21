@@ -8,6 +8,7 @@ import com.job.technicalexam.util.DateTimeUtility;
 import com.job.technicalexam.view.CustomerView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,9 +17,8 @@ import java.util.*;
 
 @Service
 public class BookingsService {
-    BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     final String BOOKING_NO_PREFIX = "BookingNo-";
-
+    BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     @Autowired
     CustomerView customerView;
 
@@ -203,11 +203,6 @@ public class BookingsService {
         );
     }
 
-    private void errorWhileSaving() {
-        System.out.println("An error was encountered while saving some of the records. " +
-                "Rolling back changes. Please try again. Press enter key to continue.");
-    }
-
     private String generateTicketNumber(int showNumber, String seatNumber) {
         String bookingNumber;
         long epoch = System.currentTimeMillis() / 1000;
@@ -292,7 +287,6 @@ public class BookingsService {
             invalidShowAction();
         }
     }
-
 
     private List<String> allBookableSeats(String column, int maximumRow) {
         String inputtedColumnStr = column.substring(0, 1);

@@ -3,8 +3,6 @@ package com.job.technicalexam.view;
 import com.job.technicalexam.TechnicalExamApplication;
 import com.job.technicalexam.model.Users;
 import com.job.technicalexam.repository.UsersRepository;
-import com.job.technicalexam.view.AdminView;
-import com.job.technicalexam.view.CustomerView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +32,14 @@ public class LoginView extends TechnicalExamApplication {
 
 //        System.out.println("Your Username is:"+username);
 //        System.out.println("Your Password is:"+password);
-        validate(username,password);
+        validate(username, password);
     }
 
     private void validate(String username, String password) throws IOException {
 
         Users userDetails = usersRepository.findByUsername(username);
 
-        if(Optional.ofNullable(userDetails).isPresent()) {
+        if (Optional.ofNullable(userDetails).isPresent()) {
             if (userDetails.getPassword().equals(password)) {
                 validateRole(userDetails);
             } else {
@@ -51,13 +49,15 @@ public class LoginView extends TechnicalExamApplication {
             invalidPasswordAction();
         }
     }
+
     private void validateRole(Users userDetails) throws IOException {
-            if(userDetails.getRole().equals("admin")) {
-                adminView.view();
-            } else {
-                customerView.view();
-            }
+        if (userDetails.getRole().equals("admin")) {
+            adminView.view();
+        } else {
+            customerView.view();
+        }
     }
+
     private void invalidPasswordAction() throws IOException {
         System.out.println("Invalid Username or password. Please try again.");
         login();

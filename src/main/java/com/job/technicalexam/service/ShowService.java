@@ -16,10 +16,9 @@ import java.util.Optional;
 
 @Service
 public class ShowService {
-    BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     final int MAX_ROWS = 26;
     final int MAX_COLUMNS = 10;
-
+    BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     @Autowired
     AdminView adminView;
 
