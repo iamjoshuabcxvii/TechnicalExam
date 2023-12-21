@@ -4,6 +4,7 @@ import com.job.technicalexam.model.Bookings;
 import com.job.technicalexam.model.ShowsList;
 import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
+import com.job.technicalexam.view.AdminView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,10 @@ public class ShowService {
     BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
     final int MAX_ROWS = 26;
     final int MAX_COLUMNS = 10;
+
+    @Autowired
+    AdminView adminView;
+
     @Autowired
     ShowsListRepository showsListRepository;
 
@@ -59,7 +64,22 @@ public class ShowService {
         System.out.print("Add Show Number: ");
         showNumber = Integer.parseInt(console.readLine());
 
+        checkIfShowAlreadyExist(showNumber);
+
         return showNumber;
+    }
+
+    private void checkIfShowAlreadyExist(int showNumber) throws IOException {
+        Optional<ShowsList> showsList = Optional.ofNullable(showsListRepository.findShowsListByShowNumber(showNumber));
+        if (showsList.isPresent()) {
+            invalidShowAction();
+        }
+    }
+
+    private void invalidShowAction() throws IOException {
+        System.out.println("Show Number already exist. Please try again. Press Enter key to continue.");
+        console.readLine();
+        adminView.view();
     }
 
     private int addNumberOfRows() throws IOException {
@@ -89,7 +109,7 @@ public class ShowService {
     private int addCancellationTimeWindow() throws IOException {
         int cancellationWindow = 0;
         System.out.print("Cancellation Window (in minutes): ");
-        try{
+        try {
             cancellationWindow = Integer.parseInt(console.readLine());
         } catch (Exception exc) {
             System.out.println("No Cancellation Window was set. Will default to 2 minutes. ");
