@@ -11,10 +11,7 @@ import javax.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class BookingsService {
@@ -46,7 +43,7 @@ public class BookingsService {
     private int bookShowNumber() throws IOException {
         int showNumber = 0;
         System.out.print("Enter Show number to book: ");
-        try{
+        try {
             showNumber = Integer.parseInt(console.readLine());
         } catch (Exception exc) {
             invalidShowAction();
@@ -82,8 +79,7 @@ public class BookingsService {
     }
 
     private void validateBookingViaShowNumberAndPhoneNumber(int showNumber, String phoneNumber) throws IOException {
-        Bookings bookings;
-        bookings = bookingsRepository.findBookingsByShowNumberAndMobileNumber(showNumber, phoneNumber);
+        Bookings bookings = bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(showNumber, phoneNumber, false);
 
         if (Optional.ofNullable(bookings).isPresent()) {
             bookingAlreadyExistAction();
@@ -98,13 +94,14 @@ public class BookingsService {
 
     private void bookedSeats(int showNumber, String phoneNumber) throws IOException {
         String seatsBooked;
-        String ticketNumber = null;
         List<String> listOfSeats;
         System.out.print("Enter each comma separate seat numbers to book: ");
         seatsBooked = console.readLine();
         listOfSeats = Arrays.asList(separateIntoListOfSeats(seatsBooked.toUpperCase(Locale.ROOT)));
+        Set<String> setWithoutDuplicates = new LinkedHashSet<>(listOfSeats);
+        List<String> listOfInputtedSeatsWithoutDuplicates = new ArrayList<>(setWithoutDuplicates);
 
-        listOfSeats.stream().forEach(seat ->
+        listOfInputtedSeatsWithoutDuplicates.stream().forEach(seat ->
                 {
                     try {
                         validateBookingViaShowNumberAndSeatNumber(showNumber, seat);
@@ -115,7 +112,7 @@ public class BookingsService {
         );
 
         if (!isDuplicateExist && !outOfConfiguredRange) {
-            ticketNumber = saveBookingInDb(showNumber, phoneNumber, listOfSeats);
+            saveBookingInDb(showNumber, phoneNumber, listOfSeats);
         }
 
     }
@@ -129,14 +126,14 @@ public class BookingsService {
         }
 
         Bookings bookings;
-        bookings = bookingsRepository.findBookingsByShowNumberAndSeatNumber(showNumber, seatNumber);
+        bookings = bookingsRepository.findBookingsByShowNumberAndSeatNumberAndDeleted(showNumber, seatNumber, false);
         if (Optional.ofNullable(bookings).isPresent()) {
             System.out.println("Duplicate bookings were found for Seat Number: " + seatNumber);
             isDuplicateExist = true;
             System.out.println("Press Enter key to continue.");
             console.readLine();
         }
-        if(isDuplicateExist && outOfConfiguredRange) {
+        if (isDuplicateExist && outOfConfiguredRange) {
             result = true;
         }
 
@@ -144,27 +141,41 @@ public class BookingsService {
     }
 
     private boolean vaidateIfWithinRangeOfColumns(String seatNumber, ShowsList showsList) {
-        boolean result = false;
-        String inputtedColumnStr = seatNumber.substring(0,1);
-        char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
-        int inputtedColumnInt = Character.valueOf(inputtedColumnn).charValue();
+        boolean isInvalidInput = false;
+        int inputtedColumnInt = 0;
+        int inputtedRow = 0;
+        int minimumColumnInt = 0;
+        int maximumColumnInt = 0;
 
-        int inputtedRow = Integer.parseInt(seatNumber.substring(1));
+        if(!seatNumber.matches("([a-jA-J]\\d{1,2})")) {
+            isInvalidInput = true;
+            invalidSeatError(seatNumber);
+        } else {
+            String inputtedColumnStr = seatNumber.substring(0, 1);
+            char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
+            inputtedColumnInt = Character.valueOf(inputtedColumnn).charValue();
 
-        char minimumColumn = 'A';
-        int minimumColumnInt = Character.valueOf(minimumColumn).charValue();
-        char maximumColumn = showsList.getColumns().charAt(0);
-        int maximumColumnInt = Character.valueOf(maximumColumn).charValue();
+            inputtedRow = Integer.parseInt(seatNumber.substring(1));
 
-        if (inputtedColumnInt < minimumColumnInt || inputtedColumnInt > maximumColumnInt
-        || inputtedRow > showsList.getRows()
-        ) {
-            System.out.println("Seat Number "+seatNumber+" is invalid for the show as it is out of Range. Please try again.");
-            result = true;
+            char minimumColumn = 'A';
+            minimumColumnInt = Character.valueOf(minimumColumn).charValue();
+            char maximumColumn = showsList.getColumns().charAt(0);
+            maximumColumnInt = Character.valueOf(maximumColumn).charValue();
+
         }
 
+        if (inputtedColumnInt < minimumColumnInt || inputtedColumnInt > maximumColumnInt
+                || inputtedRow > showsList.getRows()
+        ) {
+                invalidSeatError(seatNumber);
+            isInvalidInput = true;
+        }
 
-            return result;
+        return isInvalidInput;
+    }
+
+    private void invalidSeatError(String seatNumber) {
+        System.out.println("Seat Number " + seatNumber + " is invalid for the show as it is out of Range. Please try again.");
     }
 
     private String[] separateIntoListOfSeats(String seatsBooked) {
@@ -180,31 +191,29 @@ public class BookingsService {
 
 
     @Transactional
-    String saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
-        Bookings bookings = new Bookings();
-        final String ticketNumber = generateTicketNumber(showNumber);
+    void saveBookingInDb(int showNumber, String mobileNumber, List<String> bookedSeats) {
 
         bookedSeats.stream().forEach(seat -> {
-                    try {
-                        bookings.setShowNumber(showNumber);
-                        bookings.setMobileNumber(mobileNumber);
-                        bookings.setSeatNumber(seat);
-                        bookings.setTicketNumber(ticketNumber);
-                        bookingsRepository.save(bookings);
-                    } catch (Exception exc) {
-                        errorWhileSaving();
-                        try {
-                            console.readLine();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-            System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
+//                    try {
+                    Bookings bookings = new Bookings();
+                    bookings.setShowNumber(showNumber);
+                    bookings.setMobileNumber(mobileNumber);
+                    bookings.setSeatNumber(seat);
+                    bookings.setTicketNumber(generateTicketNumber(showNumber, seat));
+                    bookingsRepository.save(bookings);
+//                    } catch (Exception exc) {
+//                        errorWhileSaving();
+//                        try {
+//                            console.readLine();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+
                 }
+
         );
-
-
-        return ticketNumber;
+//        System.out.println("Successfully Generated Booking with Reference No.: "+ticketNumber);
     }
 
     private void errorWhileSaving() {
@@ -212,21 +221,101 @@ public class BookingsService {
                 "Rolling back changes. Please try again. Press enter key to continue.");
     }
 
-    private String generateTicketNumber(int showNumber) {
+    private String generateTicketNumber(int showNumber, String seatNumber) {
         String bookingNumber;
         long epoch = System.currentTimeMillis() / 1000;
 
-        bookingNumber = BOOKING_NO_PREFIX + showNumber + "-" + epoch;
+        bookingNumber = BOOKING_NO_PREFIX + showNumber + seatNumber + "-" + epoch;
 
+        System.out.println("Successfully Generated Booking with Reference No.: " + bookingNumber);
         return bookingNumber;
     }
 
+    public void cancelBookedSeats() throws IOException {
+        Bookings bookingsResult;
 
-    public void availableSeats() {
+        System.out.print("Enter Ticket Number: ");
+        String ticketNumber = console.readLine();
+        System.out.print("Enter Mobile Number: ");
+        String mobileNumber = console.readLine();
+        bookingsResult = bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(ticketNumber, mobileNumber, false);
+        if (Optional.ofNullable(bookingsResult).isPresent()) {
+            bookingsResult.setDeleted(true);
+            bookingsRepository.save(bookingsResult);
+            System.out.println("Successfully canceled Booking with Ticket No.: " + ticketNumber);
+            customerService.view();
+        } else {
+            System.out.println("Ticket Number or Mobile Number booked not found. Please try again. Press Enter to continue.");
+            console.readLine();
+            customerService.view();
+        }
 
     }
 
-    public void cancelBookedSeats() {
+    public void availableSeats() throws IOException {
+        // View all active bookings for a show
+        int showNumber = 0;
+        System.out.print("Enter Show Number: ");
+        try {
+            showNumber = Integer.parseInt(console.readLine());
+        } catch ( Exception exc) {
+            invalidShowAction();
+        }
+        List<Bookings> allBookedSeats = bookingsRepository.findAllByShowNumberAndDeleted(showNumber, false);
+
+        List<String> listOfAllBookedSeats = new ArrayList<>();
+
+        allBookedSeats.stream().forEach(record -> {
+            listOfAllBookedSeats.add(record.getSeatNumber());
+        });
+
+
+        // View all bookable/enabled seats
+        Optional<ShowsList> showsList = Optional.ofNullable(showsListRepository.findShowsListByShowNumber(showNumber));
+        if(showsList.isPresent()) {
+            Optional<List<String>> listOfAllBookableSeats;
+            listOfAllBookableSeats = Optional.ofNullable(allBookableSeats(showsList.get().getColumns(), showsList.get().getRows()));
+
+            //Determine what elements on both list are duplicates
+            List<String> duplicates = new ArrayList<>(listOfAllBookedSeats);
+            duplicates.retainAll(listOfAllBookableSeats.get());
+
+            //Retain only vacant seats
+            List<String> unique2 = listOfAllBookableSeats.get();
+            unique2.removeAll(duplicates);
+
+            System.out.println("Vacant Seats:");
+            unique2.stream().forEach(record -> {
+                        System.out.print(record + " ");
+                    }
+            );
+        } else {
+            invalidShowAction();
+        }
+    }
+
+
+    private List<String> allBookableSeats(String column, int maximumRow) {
+        String inputtedColumnStr = column.substring(0, 1);
+        char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
+        int maximumColumnInt = Character.valueOf(inputtedColumnn).charValue();
+        int minimumColumnInt = 65;
+        int minimumRow = 1;
+
+        List<String> bookableSeats = new ArrayList<>();
+
+        for (int ctr1 = minimumColumnInt; ctr1 <= maximumColumnInt; ctr1++) {
+
+            for (int ctr2 = minimumRow; ctr2 <= maximumRow; ctr2++) {
+                bookableSeats.add(String.valueOf(Character.toChars(ctr1)) + ctr2);
+            }
+
+        }
+//        bookableSeats.stream().forEach(seat -> {
+//            System.out.println("Bookable Seats:"+seat);
+//        });
+        return bookableSeats;
 
     }
 }
+

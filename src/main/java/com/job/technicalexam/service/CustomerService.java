@@ -35,19 +35,26 @@ public class CustomerService {
 
         switch (actionTaken){
             case 0:
+                System.out.println("Log out action selected");
+                System.out.println("*************************");
                 loginService.login();
                 break;
             case 1:
+                System.out.println("Available Tickets action selected: ");
+                System.out.println("*************************");
                 bookingsService.availableSeats();
                 view();
                 break;
             case 2:
+                System.out.println("Book Tickets action selected: ");
+                System.out.println("*************************");
                 bookingsService.bookSeats();
                 view();
                 break;
             case 3:
+                System.out.println("Cancel Tickets action selected: ");
+                System.out.println("*************************");
                 bookingsService.cancelBookedSeats();
-                System.out.println("Action Chosen is "+actionTaken);
                 break;
             default:
                 invalidAction();

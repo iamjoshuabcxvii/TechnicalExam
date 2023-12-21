@@ -1,6 +1,8 @@
 package com.job.technicalexam.service;
 
+import com.job.technicalexam.model.Bookings;
 import com.job.technicalexam.model.ShowsList;
+import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ShowService {
@@ -16,6 +20,9 @@ public class ShowService {
     final int MAX_COLUMNS = 10;
     @Autowired
     ShowsListRepository showsListRepository;
+
+    @Autowired
+    BookingsRepository bookingsRepository;
 
 
     public void addShow() throws IOException {
@@ -40,7 +47,9 @@ public class ShowService {
         showsList.setShowNumber(showNumber);
         showsList.setRows(rows);
         showsList.setColumns(columns);
-        showsList.setCancellationTimeFrame(cancellationTime);
+        if (Optional.ofNullable(cancellationTime).isPresent()) {
+            showsList.setCancellationTimeFrame(cancellationTime);
+        }
         showsListRepository.save(showsList);
 
     }
@@ -78,9 +87,13 @@ public class ShowService {
     }
 
     private int addCancellationTimeWindow() throws IOException {
-        int cancellationWindow;
+        int cancellationWindow = 0;
         System.out.print("Cancellation Window (in minutes): ");
-        cancellationWindow = Integer.parseInt(console.readLine());
+        try{
+            cancellationWindow = Integer.parseInt(console.readLine());
+        } catch (Exception exc) {
+            System.out.println("No Cancellation Window was set. Will default to 2 minutes. ");
+        }
 
         return cancellationWindow;
     }
@@ -92,6 +105,11 @@ public class ShowService {
     }
 
     public void viewShowsAndBookings() {
+        System.out.println("List of Bookings");
+        List<Bookings> bookingsList = bookingsRepository.findAll();
 
+        bookingsList.stream().forEach(record -> {
+            System.out.println("--> " + record);
+        });
     }
 }

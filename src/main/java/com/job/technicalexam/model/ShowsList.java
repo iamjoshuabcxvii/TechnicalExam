@@ -2,10 +2,7 @@ package com.job.technicalexam.model;
 
 import lombok.Data;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -17,6 +14,14 @@ public class ShowsList {
     private int showNumber;
     private int rows;
     private String columns;
-    private long cancellationTimeFrame;
+    private long cancellationTimeFrame = 2;
+
+    @PrePersist
+    @PreUpdate
+    public void checkValue(){
+        if(this.cancellationTimeFrame ==0) {
+            this.cancellationTimeFrame = 2;
+        }
+    }
 
 }

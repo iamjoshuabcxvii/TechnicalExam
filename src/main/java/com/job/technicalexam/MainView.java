@@ -1,5 +1,6 @@
 package com.job.technicalexam;
 
+import com.job.technicalexam.service.CustomerService;
 import com.job.technicalexam.service.ShowService;
 import com.job.technicalexam.service.impl.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class MainView implements CommandLineRunner {
     @Autowired
     ShowService showService;
 
+    @Autowired
+    CustomerService customerService;
+
     @Override
     public void run(String... args) throws Exception {
         main(args);
@@ -29,8 +33,9 @@ public class MainView implements CommandLineRunner {
         console.readLine();
         System.out.println("*************************");
         System.out.println("Theater Booking System");
-        loginService.login(); //actual process
+//        loginService.login(); //actual process
 //        showService.addShow();
+        customerService.view();
 
     }
 }
