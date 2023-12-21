@@ -1,6 +1,6 @@
-package com.job.technicalexam.service;
+package com.job.technicalexam.view;
 
-import com.job.technicalexam.service.impl.LoginService;
+import com.job.technicalexam.service.BookingsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +9,14 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 @Service
-public class CustomerService {
+public class CustomerView {
     BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
     @Autowired
     BookingsService bookingsService;
 
     @Autowired
-    LoginService loginService;
+    LoginView loginView;
 
     public void view() throws IOException {
         System.out.println("*************************");
@@ -37,7 +37,7 @@ public class CustomerService {
             case 0:
                 System.out.println("Log out action selected");
                 System.out.println("*************************");
-                loginService.login();
+                loginView.login();
                 break;
             case 1:
                 System.out.println("Available Tickets action selected: ");
