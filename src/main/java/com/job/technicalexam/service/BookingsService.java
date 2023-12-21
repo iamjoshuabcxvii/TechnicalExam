@@ -98,8 +98,10 @@ public class BookingsService {
         System.out.print("Enter each comma separate seat numbers to book: ");
         seatsBooked = console.readLine();
         listOfSeats = Arrays.asList(separateIntoListOfSeats(seatsBooked.toUpperCase(Locale.ROOT)));
+        Set<String> setWithoutDuplicates = new LinkedHashSet<>(listOfSeats);
+        List<String> listOfInputtedSeatsWithoutDuplicates = new ArrayList<>(setWithoutDuplicates);
 
-        listOfSeats.stream().forEach(seat ->
+        listOfInputtedSeatsWithoutDuplicates.stream().forEach(seat ->
                 {
                     try {
                         validateBookingViaShowNumberAndSeatNumber(showNumber, seat);
