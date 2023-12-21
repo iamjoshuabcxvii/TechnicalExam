@@ -5,6 +5,7 @@ import com.job.technicalexam.model.ShowsList;
 import com.job.technicalexam.repository.BookingsRepository;
 import com.job.technicalexam.repository.ShowsListRepository;
 import com.job.technicalexam.util.DateTimeUtility;
+import com.job.technicalexam.view.CustomerView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +21,7 @@ public class BookingsService {
     final String BOOKING_NO_PREFIX = "BookingNo-";
 
     @Autowired
-    CustomerService customerService;
+    CustomerView customerView;
 
     @Autowired
     ShowsListRepository showsListRepository;
@@ -47,7 +48,7 @@ public class BookingsService {
             showNumber = Integer.parseInt(console.readLine());
         } catch (Exception exc) {
             invalidShowAction();
-            customerService.view();
+            customerView.view();
         }
         checkIfExist(showNumber);
 
@@ -65,7 +66,7 @@ public class BookingsService {
     private void invalidShowAction() throws IOException {
         System.out.println("Invalid Show number inputted. Please try again. Press Enter key to continue.");
         console.readLine();
-        customerService.view();
+        customerView.view();
     }
 
     private String enterPhoneNumber(int showNumber) throws IOException {
@@ -89,7 +90,7 @@ public class BookingsService {
     private void bookingAlreadyExistAction() throws IOException {
         System.out.print("Booking already exist. Please try again with a different mobile number. Press Enter key to continue.");
         console.readLine();
-        customerService.view();
+        customerView.view();
     }
 
     private void bookedSeats(int showNumber, String phoneNumber) throws IOException {
@@ -253,12 +254,12 @@ public class BookingsService {
                 bookingsResult.get().setDeleted(true);
                 bookingsRepository.save(bookingsResult.get());
                 System.out.println("Successfully canceled Booking with Ticket No.: " + ticketNumber);
-                customerService.view();
+                customerView.view();
             }
         } else {
             System.out.println("Ticket Number or Mobile Number booked not found. Please try again. Press Enter to continue.");
             console.readLine();
-            customerService.view();
+            customerView.view();
         }
 
     }

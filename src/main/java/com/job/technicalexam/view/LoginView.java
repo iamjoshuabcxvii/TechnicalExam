@@ -1,10 +1,10 @@
-package com.job.technicalexam.service.impl;
+package com.job.technicalexam.view;
 
 import com.job.technicalexam.TechnicalExamApplication;
 import com.job.technicalexam.model.Users;
 import com.job.technicalexam.repository.UsersRepository;
-import com.job.technicalexam.service.AdminService;
-import com.job.technicalexam.service.CustomerService;
+import com.job.technicalexam.view.AdminView;
+import com.job.technicalexam.view.CustomerView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,29 +14,27 @@ import java.io.InputStreamReader;
 import java.util.Optional;
 
 @Service
-public class LoginService extends TechnicalExamApplication {
+public class LoginView extends TechnicalExamApplication {
 
     @Autowired
     UsersRepository usersRepository;
 
     @Autowired
-    AdminService adminService;
+    AdminView adminView;
 
     @Autowired
-    CustomerService customerService;
+    CustomerView customerView;
 
     public void login() throws IOException {
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("\nEnter Username: ");
         String username = console.readLine();
-        System.out.print("\n\nEnter Password: ");
+        System.out.print("\nEnter Password: ");
         String password = console.readLine();
 
-
-        System.out.println("Your Username is:"+username);
-        System.out.println("Your Password is:"+password);
+//        System.out.println("Your Username is:"+username);
+//        System.out.println("Your Password is:"+password);
         validate(username,password);
-
     }
 
     private void validate(String username, String password) throws IOException {
@@ -55,9 +53,9 @@ public class LoginService extends TechnicalExamApplication {
     }
     private void validateRole(Users userDetails) throws IOException {
             if(userDetails.getRole().equals("admin")) {
-                adminService.view();
+                adminView.view();
             } else {
-                customerService.view();
+                customerView.view();
             }
     }
     private void invalidPasswordAction() throws IOException {

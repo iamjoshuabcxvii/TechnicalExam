@@ -1,6 +1,6 @@
-package com.job.technicalexam.service;
+package com.job.technicalexam.view;
 
-import com.job.technicalexam.service.impl.LoginService;
+import com.job.technicalexam.service.ShowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,19 +9,19 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 @Service
-public class AdminService {
+public class AdminView {
 
     @Autowired
     ShowService showService;
 
     @Autowired
-    LoginService loginService;
+    LoginView loginView;
 
     BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
 
     public void view() throws IOException {
 
-        System.out.println("\n\n*************************");
+        System.out.println("*************************");
         System.out.println("Administrator Settings");
         System.out.println("1. Setup");
         System.out.println("2. View");
@@ -37,7 +37,7 @@ public class AdminService {
 
         switch (actionTaken){
             case 0:
-                loginService.login();
+                loginView.login();
             case 1:
                 showService.addShow();
                 view();
