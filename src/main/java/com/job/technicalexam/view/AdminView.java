@@ -28,14 +28,14 @@ public class AdminView {
         System.out.println("0. Log-out");
         System.out.println("Please Enter action to Take: ");
         int actionTaken = 0;
-        try{
+        try {
             actionTaken = Integer.parseInt(console.readLine());
         } catch (Exception exc) {
             invalidAction();
         }
 
 
-        switch (actionTaken){
+        switch (actionTaken) {
             case 0:
                 loginView.login();
             case 1:
@@ -51,6 +51,7 @@ public class AdminView {
                 break;
         }
     }
+
     private void invalidAction() throws IOException {
         System.out.println("Invalid action taken. Please try again. Press Enter key to continue.");
         console.readLine();

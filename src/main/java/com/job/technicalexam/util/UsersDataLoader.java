@@ -22,6 +22,7 @@ public class UsersDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Autowired
     private BookingsRepository bookingsRepository;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         //Add Default Admin and Customers

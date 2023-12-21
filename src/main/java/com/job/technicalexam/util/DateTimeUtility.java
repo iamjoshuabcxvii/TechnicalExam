@@ -1,11 +1,8 @@
 package com.job.technicalexam.util;
 
-import org.springframework.stereotype.Service;
-
 import java.sql.Timestamp;
 import java.time.Instant;
 
-@Service
 public final class DateTimeUtility {
 
     public static long currentDateTimeInEpoch() {
