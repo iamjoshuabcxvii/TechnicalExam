@@ -238,8 +238,13 @@ public class BookingsService {
 
     public void availableSeats() throws IOException {
         // View all active bookings for a show
+        int showNumber = 0;
         System.out.print("Enter Show Number: ");
-        int showNumber = Integer.parseInt(console.readLine());
+        try {
+            showNumber = Integer.parseInt(console.readLine());
+        } catch ( Exception exc) {
+            invalidShowAction();
+        }
         List<Bookings> allBookedSeats = bookingsRepository.findAllByShowNumberAndDeleted(showNumber, false);
 
         List<String> listOfAllBookedSeats = new ArrayList<>();
