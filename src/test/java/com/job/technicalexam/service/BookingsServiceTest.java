@@ -12,6 +12,10 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
@@ -108,8 +112,55 @@ public class BookingsServiceTest {
         bookings.setMobileNumber("09187654321");
         bookings.setSeatNumber("A1");
         bookings.setTicketNumber("BookingNo-1-1703068643");
+        bookings.setCreatedDate(Timestamp.valueOf("2023-12-21 13:00:51.502"));
 
         return bookings;
     }
 
+    private Bookings mockOfExistingRecentlyBookedTickets() {
+        Bookings bookings = new Bookings();
+
+        bookings.setShowNumber(1);
+        bookings.setUserId(1);
+        bookings.setMobileNumber("09187654321");
+        bookings.setSeatNumber("A1");
+        bookings.setTicketNumber("BookingNo-1-1703068643");
+        bookings.setCreatedDate(Timestamp.valueOf(LocalDateTime.now()));
+
+        return bookings;
+    }
+
+    @Test
+    public void testCancelBookingButTimeAlreadyElapsed() throws IOException {
+        when(bufferedReader.readLine()).thenReturn("1", "09187654321");
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        when(bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(anyString(), anyString(), anyBoolean())).thenReturn(mockOfExistingBookings());
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        bookingsService.cancelBookedSeats();
+
+    }
+
+    @Test (expected =  NullPointerException.class)
+    public void testCancelBookingButNotYetElapsed() throws IOException {
+        when(bufferedReader.readLine()).thenReturn("1", "09187654321");
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        when(bookingsRepository.findBookingsByTicketNumberAndMobileNumberAndDeleted(anyString(), anyString(), anyBoolean())).thenReturn(mockOfExistingRecentlyBookedTickets());
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        bookingsService.cancelBookedSeats();
+    }
+
+    @Test (expected =  NullPointerException.class)
+    public void testCancelBookingButBookingNotFound() throws IOException {
+        when(bufferedReader.readLine()).thenReturn("1", "1");
+        bookingsService.cancelBookedSeats();
+    }
+
+    @Test
+    public void testAvailableSeats() throws IOException {
+        when(bufferedReader.readLine()).thenReturn("1","");
+        when(bookingsRepository.findAllByShowNumberAndDeleted(anyInt(),anyBoolean()))
+                .thenReturn((Collections.singletonList(mockOfExistingBookings())));
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        bookingsService.availableSeats();
+    }
 }
