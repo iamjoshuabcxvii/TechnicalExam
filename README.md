@@ -2,7 +2,7 @@
 
 Assumptions:
 
-Ø Unit test is required, but there is no mention of code coverage and hence unit test for the main functions for smoke testing will be implemented with disregard to the code coverage.
+Ø Unit test is required, but there is no mention of code coverage and hence unit test for the complex functions will be covered only for as part of smoke testing will be implemented with disregard to the code coverage.
 
 Ø Registration of users or admins is not required, and hence admins and users were all pre-populated already with registration assumed to be handled by another program/interface/API that would then populated the users table in the database. Duplicate registration of same numbers is assumed to be not allowed too, hence there will be no duplicate mobile numbers on the database.
 
