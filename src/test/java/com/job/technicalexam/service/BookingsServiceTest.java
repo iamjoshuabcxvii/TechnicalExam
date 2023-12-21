@@ -36,8 +36,8 @@ public class BookingsServiceTest {
 
         when(bufferedReader.readLine()).thenReturn("1", "09187654321", "A1", "0");
         when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
                 .thenReturn(null);
         bookingsService.bookSeats();
     }
@@ -47,7 +47,7 @@ public class BookingsServiceTest {
 
         when(bufferedReader.readLine()).thenReturn("1", "09187654321", "A1", "");
         when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(mockOfExistingBookings());
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(mockOfExistingBookings());
         bookingsService.bookSeats();
     }
 
@@ -56,7 +56,7 @@ public class BookingsServiceTest {
 
         when(bufferedReader.readLine()).thenReturn("1", "09187654321", "A1", "");
         when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
         when(bookingsRepository.findBookingsByShowNumberAndSeatNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
                 .thenReturn(mockOfExistingBookings());
         bookingsService.bookSeats();
@@ -74,8 +74,19 @@ public class BookingsServiceTest {
     public void outOfRangeSeatsTest() throws IOException {
         when(bufferedReader.readLine()).thenReturn("1", "09187654321", "B1");
         when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
-        when(bookingsRepository.findAllByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
+                .thenReturn(null);
+        bookingsService.bookSeats();
+    }
+
+    @Test
+    public void withInvalidSeatRange() throws IOException {
+
+        when(bufferedReader.readLine()).thenReturn("1", "09187654321", "a123", "0");
+        when(showsListRepository.findShowsListByShowNumber(anyInt())).thenReturn(mockOfShows());
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean())).thenReturn(null);
+        when(bookingsRepository.findDistinctFirstByShowNumberAndMobileNumberAndDeleted(anyInt(), anyString(), anyBoolean()))
                 .thenReturn(null);
         bookingsService.bookSeats();
     }

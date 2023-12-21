@@ -139,27 +139,41 @@ public class BookingsService {
     }
 
     private boolean vaidateIfWithinRangeOfColumns(String seatNumber, ShowsList showsList) {
-        boolean result = false;
-        String inputtedColumnStr = seatNumber.substring(0, 1);
-        char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
-        int inputtedColumnInt = Character.valueOf(inputtedColumnn).charValue();
+        boolean isInvalidInput = false;
+        int inputtedColumnInt = 0;
+        int inputtedRow = 0;
+        int minimumColumnInt = 0;
+        int maximumColumnInt = 0;
 
-        int inputtedRow = Integer.parseInt(seatNumber.substring(1));
+        if(!seatNumber.matches("([a-jA-J]\\d{1,2})")) {
+            isInvalidInput = true;
+            invalidSeatError(seatNumber);
+        } else {
+            String inputtedColumnStr = seatNumber.substring(0, 1);
+            char inputtedColumnn = inputtedColumnStr.toUpperCase().charAt(0);
+            inputtedColumnInt = Character.valueOf(inputtedColumnn).charValue();
 
-        char minimumColumn = 'A';
-        int minimumColumnInt = Character.valueOf(minimumColumn).charValue();
-        char maximumColumn = showsList.getColumns().charAt(0);
-        int maximumColumnInt = Character.valueOf(maximumColumn).charValue();
+            inputtedRow = Integer.parseInt(seatNumber.substring(1));
+
+            char minimumColumn = 'A';
+            minimumColumnInt = Character.valueOf(minimumColumn).charValue();
+            char maximumColumn = showsList.getColumns().charAt(0);
+            maximumColumnInt = Character.valueOf(maximumColumn).charValue();
+
+        }
 
         if (inputtedColumnInt < minimumColumnInt || inputtedColumnInt > maximumColumnInt
                 || inputtedRow > showsList.getRows()
         ) {
-            System.out.println("Seat Number " + seatNumber + " is invalid for the show as it is out of Range. Please try again.");
-            result = true;
+                invalidSeatError(seatNumber);
+            isInvalidInput = true;
         }
 
+        return isInvalidInput;
+    }
 
-        return result;
+    private void invalidSeatError(String seatNumber) {
+        System.out.println("Seat Number " + seatNumber + " is invalid for the show as it is out of Range. Please try again.");
     }
 
     private String[] separateIntoListOfSeats(String seatsBooked) {
