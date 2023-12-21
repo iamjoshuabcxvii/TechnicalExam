@@ -29,14 +29,12 @@ public class LoginService extends TechnicalExamApplication {
         BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
         System.out.print("\nEnter Username: ");
         String username = console.readLine();
-        System.out.print("\n\nEnter Password: ");
+        System.out.print("\nEnter Password: ");
         String password = console.readLine();
 
-
-        System.out.println("Your Username is:"+username);
-        System.out.println("Your Password is:"+password);
+//        System.out.println("Your Username is:"+username);
+//        System.out.println("Your Password is:"+password);
         validate(username,password);
-
     }
 
     private void validate(String username, String password) throws IOException {

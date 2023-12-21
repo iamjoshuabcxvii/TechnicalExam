@@ -19,7 +19,7 @@ public class CustomerService {
     LoginService loginService;
 
     public void view() throws IOException {
-        System.out.println("\n\n*************************");
+        System.out.println("*************************");
         System.out.println("Customer Settings");
         System.out.println("1. Available Seats");
         System.out.println("2. Book Seats");
@@ -62,7 +62,6 @@ public class CustomerService {
         }
     }
 
-    //Move into a utility
     private void invalidAction() throws IOException {
         System.out.println("Invalid action taken. Please try again. Press Enter key to continue.");
         console.readLine();

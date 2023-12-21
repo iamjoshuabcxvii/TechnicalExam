@@ -33,9 +33,9 @@ public class MainView implements CommandLineRunner {
         console.readLine();
         System.out.println("*************************");
         System.out.println("Theater Booking System");
-//        loginService.login(); //actual process
+        loginService.login();
 //        showService.addShow();
-        customerService.view();
+//        customerService.view();
 
     }
 }

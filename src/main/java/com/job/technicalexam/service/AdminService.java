@@ -21,7 +21,7 @@ public class AdminService {
 
     public void view() throws IOException {
 
-        System.out.println("\n\n*************************");
+        System.out.println("*************************");
         System.out.println("Administrator Settings");
         System.out.println("1. Setup");
         System.out.println("2. View");
